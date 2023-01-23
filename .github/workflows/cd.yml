@@ -1,0 +1,31 @@
+name: CD
+
+on:
+  push:
+    branches: [stable]
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    name: BUILD 🔨 & DEPLOY 🚀
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: stable
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - run: pnpm i
+      - run: pnpm build
+
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: dist # The folder the action should deploy.
